@@ -4,12 +4,14 @@ This is the supplementary cheat sheet document for our course: [Build a Backend 
 
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [Git](#git)
-- [SSH Key Management](#ssh-key-management)
-- [Virtual Environments](#virtual-environments)
-- [Django Management Commands](#django-management-commands)
-- [Vagrant](#vagrant)
-- [Terminal / GitBash Commands](#terminal-gitbash-commands)
+- [Build a Backend REST API with Python & Django - Beginner](#build-a-backend-rest-api-with-python--django---beginner)
+  - [Git](#git)
+  - [SSH Key Management](#ssh-key-management)
+  - [Virtual Environments](#virtual-environments)
+  - [Install required Python packages (#17)](#install-required-python-packages-17)
+  - [Django Management Commands](#django-management-commands)
+  - [Vagrant](#vagrant)
+  - [Terminal / GitBash Commands](#terminal--gitbash-commands)
 
 <!-- /TOC -->
 
@@ -54,6 +56,22 @@ git push -u origin master
 git push origin
 ```
 
+**Other Git Commands**
+
+```
+git remote -v
+
+git pull origin main --rebase
+
+git checkout -b temp/branch
+
+git checkout main
+
+git checkout temp/branch
+
+git merge <BRANCH YOU WISH TO MERGE>
+```
+
 ## SSH Key Management
 
 The below commands are used to manage SSH keys on your local development machine.
@@ -84,7 +102,7 @@ The below commands are used for managing Virtual Environments using Python3-env.
 **Create new environment**
 
 ```
-python -m venv ~/env
+python3 -m venv ~/env
 ```
 
 **Activate virtual environment**
@@ -99,7 +117,22 @@ source ~/env/bin/activate
 deactivate
 ```
 
-**Install requirements from requirements.txt**
+## Install required Python packages (#17)
+
+**Create new Django project environment - Inside the '<u>requirements.txt</u>' document**
+
+See ==> [Find, install and publish Python packages with the Python Package Index](https://pypi.org/c1)
+
+See example below:
+
+```
+Django>=4.0.4,<4.1.0
+djangorestframework==3.13.1,<3.14.0
+flake8>=4.0.1,<4.1.0
+
+```
+
+**Install requirements from "<u>requirements.txt</u>"**
 
 *Note: Virtual environment must be activated*
 
@@ -112,7 +145,7 @@ pip install -r requirements.txt
 **Create new Django project**
 
 ```
-django-admin.py startproject profiles_project  .
+django-admin startproject profiles_project .
 ```
 
 **Create new Django app**
@@ -121,10 +154,35 @@ django-admin.py startproject profiles_project  .
 python manage.py startapp profiles_api
 ```
 
-**Start Django development server**
+**Update settings.py INSTALLED APP section**
 
 ```
-python manage.py runserver 0.0.0.0:8000
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles', # Add the next 3 items
+    'rest_framework',
+    'rest_framework.authtoken',
+    'profiles_api',
+]
+```
+
+**Start Django development server**
+
+For 127.0.0.1:8000 (default)
+```
+python manage.py runserver
+```
+For 127.0.0.1:5000
+```
+python manage.py runserver 8000
+```
+For 123.4.5.6:7777
+```
+python manage.py runserver 123.4.5.6:7777
 ```
 
 **Create database migrations file**
