@@ -351,10 +351,13 @@ git push --set-upstream origin temp/tng
 **Push updates to GitHub**
 
 ```
+git status
+git add . 
+git commit -am "Updated Readme to show remote commit command for a branch"
 git push --set-upstream origin temp/tng
 ```
 
-**pdates admin.py in your app's folder**
+**Update admin.py in your app's folder**
 ```
 from django.contrib import admin
 from profiles_api import models
@@ -363,4 +366,100 @@ from profiles_api import models
 
 admin.site.register(models.UserProfile)
 
+```
+**Push updates to GitHub**
+
+```
+git status
+git add . 
+git commit -am "Enable Django admin for user profile model"
+git push
+```
+**APIView**
+**Update views.py in your app's folder**
+```
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+
+class HelloApiView(APIView):
+    """Test API View"""
+
+    def get(self, request, format=None):
+        """Returns a list of APIView features"""
+
+        an_apiview = [
+            'Uses HTTP methods as functions (get, post, patch, put, delete)',
+            'Is similar to a traditional Django View',
+            'Gives you the most control over your logic',
+            'Is mapped manually to URLs',
+        ]
+
+        # Need to return a disctionary
+        return Response({'message': 'Hello!', 'an_apiview': an_apiview})
+```
+
+**APIView**
+**Update views.py in your app's folder**
+- Create a "urls.py" under profiles_api folder
+- Update the **Project's** urls.py with the following
+```
+from django.contrib import admin
+from django.urls import path, include
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('profiles_api.urls'))
+]
+
+```
+
+**APIView**
+**Update urls.py in your app's folder (profiles_api)**
+```
+from django.urls import path
+from profiles_api import views
+
+urlpatterns = [
+    path('hello-view/', views.HelloApiView.as_view()),
+]
+
+```
+
+**APIView**
+**python manage.py runserver**
+```
+
+Django REST framework (http://127.0.0.1:8000/api/hello-view/)
+
+
+Hello Api
+Test API View
+
+GET /api/hello-view/
+
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "message": "Hello!",
+    "an_apiview": [
+        "Uses HTTP methods as functions (get, post, patch, put, delete)",
+        "Is similar to a traditional Django View",
+        "Gives you the most control over your logic",
+        "Is mapped manually to URLs"
+    ]
+}
+```
+
+**Push updates to GitHub**
+
+```
+git status
+git add . 
+git commit -am "Added HelloApiView and updated Readme"
+git push
 ```
