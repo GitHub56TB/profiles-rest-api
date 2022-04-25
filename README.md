@@ -353,3 +353,14 @@ git push --set-upstream origin temp/tng
 ```
 git push --set-upstream origin temp/tng
 ```
+
+**pdates admin.py in your app's folder**
+```
+from django.contrib import admin
+from profiles_api import models
+
+# Register your models here.
+
+admin.site.register(models.UserProfile)
+
+```
