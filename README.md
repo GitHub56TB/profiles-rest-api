@@ -344,4 +344,12 @@ python manage.py makemigrations profiles_api
 
 ```
 python manage.py migrate
+
+git push --set-upstream origin temp/tng
+```
+
+**Push updates to GitHub**
+
+```
+git push --set-upstream origin temp/tng
 ```
