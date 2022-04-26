@@ -688,10 +688,10 @@ git push
 ```
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
 
+from rest_framework import status
 from profiles_api import serializers
+
 from profiles_api import models
 
 
@@ -793,7 +793,7 @@ class HelloViewSet(viewsets.ViewSet):
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
-    """Handle creating, creating and updating profiles"""
+    """Handle creating, creating and updating profiles - Use this for databases e.g., CRUD"""
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
 
@@ -869,15 +869,15 @@ class ProfileFeedItemSerializer(serializers.ModelSerializer):
         fields = ('id', 'user_profile', 'status_text', 'created_on')
         extra_kwargs = {'user_profile': {'read_only': True}}
 
-
-
 ```
 **Profiles API Viewsets Project**
 **Update profiles_api/urls.py**
 
 ```
 from django.urls import path, include
+
 from rest_framework.routers import DefaultRouter
+
 from profiles_api import views
 
 router = DefaultRouter()
@@ -890,5 +890,6 @@ urlpatterns = [
     path('hello-view/', views.HelloApiView.as_view()),
     path('', include(router.urls))
 ]
+
 
 ```

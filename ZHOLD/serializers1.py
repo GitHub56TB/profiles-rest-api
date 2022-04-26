@@ -3,7 +3,7 @@ from profiles_api import models
 
 
 class HelloSerializer(serializers.Serializer):
-    """Serializes a name field for testing our APIView"""
+    """Serializes a name field for testing out APIView"""
     name = serializers.CharField(max_length=10)
 
 
@@ -12,10 +12,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
+        # Tupal using '()' to list the fields you want to use
         fields = ('id', 'email', 'name', 'password')
-        extra_kwargs = {
+        extra_kwargs = {  # to make password to 'write only'
             'password': {
                 'write_only': True,
+                # hides password as you type
                 'style': {'input_type': 'password'}
             }
         }
@@ -30,8 +32,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return user
 
-    def update(self, instance, validated_data):
-        """Handle updating user account - Fix ==> https://github.com/LondonAppDev/profiles-rest-api/blob/master/profiles_api/serializers.py#L34
+
+"""Training fix ==> https://github.com/LondonAppDev/profiles-rest-api/blob/master/profiles_api/serializers.py#L34
 
 Explanation
 
@@ -43,9 +45,22 @@ Therefore, we override the Django REST Framework's update() method to add this l
 
 If the field exists, we will "pop" (which means assign the value and remove from the dictionary) the password from the validated data and set it using set_password() (which saves the password as a hash).
 
-Once that's done, we use super().update() to pass the values to the existing DRF update() method, to handle updating the remaining fields."""
-        if 'password' in validated_data:
+Once that's done, we use super().update() to pass the values to the existing DRF update() method, to handle updating the remaining fields.
+"""
+
+ def update(self, instance, validated_data):
+      """Handle updating user account"""
+       if 'password' in validated_data:
             password = validated_data.pop('password')
             instance.set_password(password)
 
         return super().update(instance, validated_data)
+
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed items"""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        fields = ('id', 'user_profile', 'status_text', 'created_on')
+        extra_kwargs = {'user_profile': {'read_only': True}}
