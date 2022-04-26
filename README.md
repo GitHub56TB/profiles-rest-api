@@ -942,5 +942,40 @@ git add .
 git commit -am "Added Profiles Viewset with Search"
 git push
 ```
-**API Viewsets Profiles Project**
+**API Viewsets Profiles Project SHORT (OAuth)**
 **Update profiles_api/views.py**
+```
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
+
+class UserLoginApiView(ObtainAuthToken):
+   """Handle creating user authentication tokens"""
+   renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+```
+**API Viewsets Profiles Project SHORT (OAuth)**
+**Update profiles_api/urls.py**
+**http://127.0.0.1:8000/api/login/**
+```
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from profiles_api import views
+
+router = DefaultRouter()
+router.register(r'hello-viewset', views.HelloViewSet,
+                basename='hello-viewset')  # Training Class 40 - https://www.django-rest-framework.org/api-guide/viewsets/ (use basename versus base_name; 'r' is optional)
+
+router.register(r'profile', views.UserProfileViewSet)
+
+urlpatterns = [
+    path('hello-view/', views.HelloApiView.as_view()),
+    path('login/', views.UserLoginApiView.as_view()),
+    path('', include(router.urls)),
+]
+
+```
+**Push updates to GitHub**
+```
+git add . 
+git commit -am "Added Profiles Viewset with Login Oauth API"
+git push
+```
