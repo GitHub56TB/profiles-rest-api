@@ -544,3 +544,141 @@ git add .
 git commit -am "Added POST, PATCH, PUT, DELETE methods to APIView"
 git push
 ```
+**Viewsets**
+**Update/Register/Add Routers profiles_api/urls.py**
+
+```
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
+
+from profiles_api import views
+
+router = DefaultRouter()
+router.register(r'hello-viewset', views.HelloViewSet,
+                basename='hello-viewset')  # Training Class 40 - https://www.django-rest-framework.org/api-guide/viewsets/ (use basename versus base_name; 'r' is optional)
+
+
+urlpatterns = [
+    path('hello-view/', views.HelloApiView.as_view()),
+    path('', include(router.urls))
+]
+
+```
+**Viewsets**
+**Update profiles_api/views.py**
+
+```
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import viewsets
+
+from profiles_api import serializers
+
+
+class HelloApiView(APIView):
+    """Test API View"""
+    serializer_class = serializers.HelloSerializer  # Get functiion from serializer.py (Key item !!!)
+
+    def get(self, request, format=None):
+        """Returns a list of APIView features"""
+        an_apiview = [
+            'Uses HTTP methods as functions (get, post, patch, put, delete)',
+            'Is similar to a traditional Django View',
+            'Gives you the most control over your logic',
+            'Is mapped manually to URLs',
+        ]
+
+        # Must return a dictionary
+        return Response({'message': 'Hello!', 'an_apiview': an_apiview})
+
+    def post(self, request):
+        """Create a hello message with our name"""
+
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({'message': message})  # Must return a dictionary
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def put(self, request, pk=None):
+        """Handle updating/replacing an object"""
+
+        return Response({'method': 'PUT'})  # Must return a dictionary
+
+    def patch(self, request, pk=None):
+        """Handle partial update of object"""
+
+        return Response({'method': 'PATCH'})  # Must return a dictionary
+
+    def delete(self, request, pk=None):
+        """Delete an object"""
+
+        return Response({'method': 'DELETE'})  # Must return a dictionary
+
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test API ViewSet"""
+    serializer_class = serializers.HelloSerializer  # Added Class #42
+
+    def list(self, request):
+        """Return a hello message."""
+
+        a_viewset = [
+            'Uses actions (list, create, retrieve, update, partial_update)',
+            'Automatically maps to URLS using Routers',
+            'Provides more functionality with less code',
+        ]
+
+        return Response({'message': 'Hello!', 'a_viewset': a_viewset})
+
+    def create(self, request):
+        """Create a new hello message."""
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({'message': message})
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrieve(self, request, pk=None):
+        """Handle getting an object by its ID"""
+
+        return Response({'http_method': 'GET'})
+
+    def update(self, request, pk=None):
+        """Handle updating an object"""
+
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self, request, pk=None):
+        """Handle updating part of an object"""
+
+        return Response({'http_method': 'PATCH'})
+
+    def destroy(self, request, pk=None):
+        """Handle removing an object"""
+
+        return Response({'http_method': 'DELETE'})
+
+```
+**Push updates to GitHub**
+
+```
+git status
+git add . 
+git commit -am "Added POST, PATCH, PUT, DELETE methods to Viewset"
+git push
+```
