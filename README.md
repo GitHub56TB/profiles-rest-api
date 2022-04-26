@@ -682,7 +682,7 @@ git add .
 git commit -am "Added POST, PATCH, PUT, DELETE methods to Viewset"
 git push
 ```
-**Profiles API Viewsets Project**
+**API Viewsets Profiles Project**
 **Update profiles_api/views.py**
 
 ```
@@ -798,7 +798,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = models.UserProfile.objects.all()
 
 ```
-**Profiles API Viewsets Project**
+**API Viewsets Profiles Project**
 **Update profiles_api/serializers.py**
 
 ```
@@ -872,7 +872,7 @@ class ProfileFeedItemSerializer(serializers.ModelSerializer):
 
 
 ```
-**Profiles API Viewsets Project**
+**API Viewsets Profiles Project**
 **Update profiles_api/urls.py**
 
 ```
@@ -892,3 +892,42 @@ urlpatterns = [
 ]
 
 ```
+**API Viewsets Profiles Project**
+**Update profiles_api/permissions.py**
+```
+from rest_framework import permissions
+
+
+class UpdateOwnProfile(permissions.BasePermission):
+    """Allow users to edit their own profile"""
+
+    def has_object_permission(self, request, view, obj):
+        """Check user is trying to edit their own profile"""
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.id == request.user.id  # Return True if user is different
+
+```
+**API Viewsets Profiles Project - SHORT**
+**Update profiles_api/views.py**
+```
+from rest_framework.authentication import TokenAuthentication
+from profiles_api import permissions
+...
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating, creating and updating profiles"""
+    ...
+    # add a comma to make a tuple
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile,)
+```
+**Push updates to GitHub**
+```
+git add . 
+git commit -am "Added Profiles Viewset"
+git push
+```
+**API Viewsets Profiles Project**
+**Update profiles_api/views.py**
