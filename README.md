@@ -923,10 +923,23 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.UpdateOwnProfile,)
 ```
+**API Viewsets Profiles Project - SHORT (Search)**
+**Update profiles_api/views.py**
+```
+from rest_framework import filters
+
+...
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating, creating and updating profiles"""
+    ...
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
+```
 **Push updates to GitHub**
 ```
 git add . 
-git commit -am "Added Profiles Viewset"
+git commit -am "Added Profiles Viewset with Search"
 git push
 ```
 **API Viewsets Profiles Project**

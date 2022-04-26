@@ -9,6 +9,8 @@ from profiles_api import models
 from rest_framework.authentication import TokenAuthentication
 from profiles_api import permissions
 
+from rest_framework import filters
+
 
 class HelloApiView(APIView):
     """Test API View"""
@@ -115,3 +117,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     # add a comma to make a tuple
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.UpdateOwnProfile,)
+
+    filter_backends = (filters.SearchFilter,)  # Add search capabilities
+    search_fields = ('name', 'email',)  # Fields that are searchable
