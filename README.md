@@ -979,3 +979,10 @@ git add .
 git commit -am "Added Profiles Viewset with Login Oauth API"
 git push
 ```
+**Push updates to GitHub**
+```
+AWS Scripts (Makes all files ending in “*.sh” executable)
+
+chmod +x deploy/*.sh
+==============================
+```
