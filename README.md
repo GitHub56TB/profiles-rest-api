@@ -979,3 +979,125 @@ git add .
 git commit -am "Added Profiles Viewset with Login Oauth API"
 git push
 ```
+
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/models.py**
+```
+from django.conf import settings
+...
+
+class ProfileFeedItem(models.Model):
+    """Profile status update"""
+    user_profile = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    status_text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return self.status_text
+```
+- Run the following commands
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/admin.py**
+**Register New Model**
+```
+from django.contrib import admin
+from profiles_api import models
+
+# Register your models here.
+
+admin.site.register(models.UserProfile)
+admin.site.register(models.ProfileFeedItem)
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/serializes.py**
+**Serializes profile feed items**
+
+```
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed items"""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        # Should always include 'id' which is created automatically
+        fields = ('id', 'user_profile', 'status_text', 'created_on')
+        extra_kwargs = {'user_profile': {'read_only': True}}
+
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/views.py**
+```
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+
+    def perform_create(self, serializer):  # Called on ALL POSTs authomatically
+        """Sets the user profile to the logged in user"""
+        serializer.save(user_profile=self.request.user)
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/urls.py**
+```
+...
+router.register(r'feed', views.UserProfileFeedViewSet)
+...
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/permissions.py**
+```
+...
+class UpdateOwnStatus(permissions.BasePermission):
+    """Allow users to update their own status"""
+
+    def has_object_permission(self, request, view, obj):
+        """Check the user is trying to update their own status"""
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.user_profile.id == request.user.id
+
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/views.py**
+```
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+...
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items."""
+    ...
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+        IsAuthenticatedOrReadOnly
+    )
+    ...
+```
+**API Viewsets Profiles Project - SHORT (FEEDS)**
+**Update profiles_api/views.py**
+```
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+
+#    permission_classes = (
+#        permissions.UpdateOwnStatus,
+#        IsAuthenticatedOrReadOnly
+#    )
+
+    permission_classes = (permissions.UpdateOwnStatus, IsAuthenticated)
+
+    def perform_create(self, serializer):  # Called on ALL POSTs authomatically
+        """Sets the user profile to the logged in user"""
+        serializer.save(user_profile=self.request.user)
+```
